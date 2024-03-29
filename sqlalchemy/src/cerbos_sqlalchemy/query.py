@@ -73,8 +73,11 @@ def get_query(
     required_tables = set()
     for c in attr_map.values():
         # c is of type Union[Column, InstrumentedAttribute] - both have a `table` attribute returning a `Table` type
-        if (n := c.table.name) != _get_table_name(table):
-            required_tables.add(n)
+        try:
+            if (n := c.table.name) != _get_table_name(table):
+                required_tables.add(n)
+        except AttributeError:
+            pass
 
     if len(required_tables):
         if table_mapping is None:
